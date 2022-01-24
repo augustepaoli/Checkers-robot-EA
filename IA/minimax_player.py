@@ -1,9 +1,13 @@
-from player import Player
-
+import os
 import sys
-sys.path.insert(1, '/Users/auguste/Desktop/EA/code /Game')
-from board import Board
+PROJECT_ROOT = os.path.abspath(os.path.join(
+                  os.path.dirname(__file__), 
+                  os.pardir)
+)
+sys.path.append(PROJECT_ROOT)
 
+from IA.player import Player
+from Game.board import Board
 
 
 class minimax_player(Player) :

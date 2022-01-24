@@ -348,7 +348,7 @@ class Board:
                 return(-100)
             return(100)
         
-        p1c,p1k,p2c,p2k=self.numbers()
+        p1c,p2c,p1k,p2k=self.numbers()
         return(p1c - p2c + 2*(p1k - p2k))
     
     def winner(self):
