@@ -17,12 +17,17 @@ game=Game(p1,p2)
 print(game.end_game(verbose=False))
 print("")
 
-print("test : number of wins of a minimax player with depth 2 against random player, out of 100 games :")
-p1=random_player()
-p2=minimax_player(2)
-count=0
-for i in range(100) :
-    game=Game(p1,p2)
-    if game.end_game()==2 :
-        count+=1
-print(count)
+#print("test : number of wins of a minimax player with depth 2 against random player, out of 100 games :")
+#p1=random_player()
+#p2=minimax_player(2)
+#count=0
+#for i in range(100) :
+#    game=Game(p1,p2)
+#    if game.end_game()==2 :
+#        count+=1
+#print(count)
+
+p1=minimax_player(3)
+p2=minimax_player(5)
+game=Game(p1,p2)
+print(game.end_game(ignore_history=False,verbose=True))

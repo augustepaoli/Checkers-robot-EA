@@ -32,15 +32,17 @@ class minimax_player(Player) :
         board.player_turn = player
         
         if ignore_history!=True and len(ignore_history)>=17 and ignore_history[len(ignore_history)-17].spots==ignore_history[len(ignore_history)-9].spots==board.spots :
-            return board.evaluate(True)
+            return board.evaluate(True),board
         
         if ignore_history!=True and len(ignore_history)>=25 :
             same = True
-            for i in range(24) :
-                if ignore_history[len(ignore_history)-i-1].numbers() != ignore_history[len(ignore_history)-i-2].numbers() :
+            i=0
+            while i<=23 and same == True :
+                if ignore_history[len(ignore_history)-(25-i)].numbers() != ignore_history[len(ignore_history)-(25-i-1)].numbers() :
                     same=False
+                i+=1
             if same :
-                return board.evaluate(True)
+                return board.evaluate(True),board
             
         if depth == 0 or board.is_game_over() :
             return board.evaluate(),board
