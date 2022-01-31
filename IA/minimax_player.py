@@ -7,7 +7,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(
 sys.path.append(PROJECT_ROOT)
 
 from IA.player import Player
-from Game.board import Board
+from Game_Interface.board import Board
 
 
 class minimax_player(Player) :

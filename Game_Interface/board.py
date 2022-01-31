@@ -1,6 +1,17 @@
 import math
 import copy
 from functools import reduce
+import pygame
+
+import os
+import sys
+PROJECT_ROOT = os.path.abspath(os.path.join(
+                  os.path.dirname(__file__), 
+                  os.pardir)
+)
+sys.path.append(PROJECT_ROOT)
+
+from Game_Interface.piece import Piece
 
 class Board:
     """
@@ -15,6 +26,16 @@ class Board:
     HEIGHT = 8
     WIDTH = 4
     
+    WIDTH_DRAW, HEIGHT_DRAW = 800, 800
+    ROWS, COLS = 8, 8
+    SQUARE_SIZE = WIDTH_DRAW//COLS
+
+    # rgb
+    RED = (236, 112, 99)
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    BLUE = (0, 0, 255)
+    GREY = (128,128,128)
     
     def __init__(self, old_spots=None, the_player_turn=True):
         """
@@ -293,6 +314,123 @@ class Board:
             print(temp_line)
             print(norm_line)
             
+    ##########
+    #Pour implémenter l'interface
+    ##########
+    
+    def realtospots(self,row,col):
+        if row%2 == 0:
+            if col%2==0:
+                return(row,int(col/2))
+            else:
+                return(-1,-1)
+        else:
+            if col%2==0:
+                return(-1,-1)
+            else:
+                return(row,int((col-1)/2))
+
+    def spotstoreal(self,row,col):
+        if row%2 == 0:
+            if col%2==0:
+                return(row,int(2*col))
+            else:
+                if col==1:
+                    return(row,2)
+                else:
+                    return(row,6)
+        else:
+            return(row,int(2*col+1))
+        
+    def draw_squares(self, win):
+        win.fill(self.BLACK)
+        for row in range(self.ROWS):
+            for col in range(row % 2, self.COLS, 2):
+                pygame.draw.rect(win, self.RED, (row*self.SQUARE_SIZE, col *self.SQUARE_SIZE, self.SQUARE_SIZE, self.SQUARE_SIZE))
+
+    def draw(self, win):
+        self.draw_squares(win)
+        for row in range(self.ROWS):
+            for col in range(self.COLS):
+                spotsrow,spotscol = self.realtospots(row,col)
+                if spotsrow==-1:
+                    piece=0
+                else:
+                    piece = self.get_piece(spotsrow,spotscol)
+                if piece != 0:
+                    piece.draw(win)
+                    
+    def get_symbol(self, location):
+        """
+        Gets the symbol for what should be at a board location.
+        """
+        if self.spots[location[0]][location[1]] == self.EMPTY_SPOT:
+            return " "
+        elif self.spots[location[0]][location[1]] == self.P1:
+            return "o"
+        elif self.spots[location[0]][location[1]] == self.P2:
+            return "x"
+        elif self.spots[location[0]][location[1]] == self.P1_K:
+            return "O"
+        else:
+            return "X"
+        
+    def get_piece(self, row, col):
+        nb = self.spots[row][col]
+        if nb != 0:
+            return(Piece(row,col,nb))
+        else:
+            return(0)
+                    
+    def get_possible_next_moves_from_piece(self,piece):
+        row,col = piece.row,piece.col
+        l=[]
+        liste = self.get_possible_next_moves()
+        for i in range(len(liste)):
+            if liste[i][0] == [row,col]:
+                l.append(liste[i])
+        return(l)
+    
+    def make_move_from_piece(self, piece, move, switch_player_turn=True):
+        """
+        Makes a given move on the board, and (as long as is wanted) switches the indicator for
+        which players turn it is.
+        """
+        print(move)
+        piece.move(move[-1][0],move[-1][1])
+        if abs(move[0][0] - move[1][0]) == 2:
+            for j in range(len(move) - 1):
+                if move[j][0] % 2 == 1:
+                    if move[j + 1][1] < move[j][1]:
+                        middle_y = move[j][1]
+                    else:
+                        middle_y = move[j + 1][1]
+                else:
+                    if move[j + 1][1] < move[j][1]:
+                        middle_y = move[j + 1][1]
+                    else:
+                        middle_y = move[j][1]
+                        
+                self.spots[int((move[j][0] + move[j + 1][0]) / 2)][middle_y] = self.EMPTY_SPOT
+                
+                
+        self.spots[move[len(move) - 1][0]][move[len(move) - 1][1]] = self.spots[move[0][0]][move[0][1]]
+        if move[len(move) - 1][0] == self.HEIGHT - 1 and self.spots[move[len(move) - 1][0]][move[len(move) - 1][1]] == self.P1:
+            self.spots[move[len(move) - 1][0]][move[len(move) - 1][1]] = self.P1_K
+            piece.make_king()
+        elif move[len(move) - 1][0] == 0 and self.spots[move[len(move) - 1][0]][move[len(move) - 1][1]] == self.P2:
+            self.spots[move[len(move) - 1][0]][move[len(move) - 1][1]] = self.P2_K
+            piece.make_king()
+        else:
+            self.spots[move[len(move) - 1][0]][move[len(move) - 1][1]] = self.spots[move[0][0]][move[0][1]]
+        self.spots[move[0][0]][move[0][1]] = self.EMPTY_SPOT
+                
+        if switch_player_turn:
+            self.player_turn = not self.player_turn
+            
+    #########
+    #Pour les IAs
+    #########  
             
     def numbers(self):
         
@@ -310,7 +448,6 @@ class Board:
                     p1k+=1
                 else:
                     p2k+=1
-                    
         return p1c,p2c,p1k,p2k
     
     def get_numberpawnsp1_value(self) :

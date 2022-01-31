@@ -8,8 +8,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(
 )
 sys.path.append(PROJECT_ROOT)
 
-from Game.board import Board
-
+from Game_Interface.board import Board
 
 class Game :
     
