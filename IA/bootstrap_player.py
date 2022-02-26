@@ -1,4 +1,6 @@
 import numpy as np
+import time
+import pickle
 
 import os
 import sys
@@ -17,9 +19,9 @@ class bootstrap_player(Player) :
     VALABS_FEATURES_MAX=np.array([12,12,12,12])
     CST_VAR=1
 
-    def __init__(self,default_depth,learning=False,step=1e-3,theta_init="rd",features="all") :
+    def __init__(self,default_depth,learning=True,step=5e-2,theta_init="rd",features="all") :
         self.learning=learning
-        self.name = "Bootstrap_player"
+        self.name = "bootstrap_player"+str(int(time.time()*1000))
         self.default_depth = default_depth
         self.step=step
         
@@ -38,12 +40,56 @@ class bootstrap_player(Player) :
         self.theta=(self.CST_VAR/new_var)*(self.theta-new_mean)
 
         self.number_games=0
-        
+        self.counting_error=False
+        self.total_square_error=0.0
+        self.number_scores_counted=0
+
         return   
     
     def get_name(self) :
         return self.name
-    
+
+    def save(self) :
+        target_path = os.path.abspath(os.path.join(
+                        os.path.dirname(__file__), 
+                        os.pardir,
+                        "saved_IAs")
+        )
+        filename = self.name + '.obj'
+        completeName = os.path.join(target_path, filename)
+
+        file = open(completeName,'wb')
+        pickle.dump(self,file)
+        file.close()
+        return
+
+    def delete(self) :
+        target_path = os.path.abspath(os.path.join(
+                        os.path.dirname(__file__), 
+                        os.pardir,
+                        "saved_IAs")
+        )
+        filename = self.name + '.obj'
+        completeName = os.path.join(target_path, filename)
+        if os.path.exists(completeName) :
+            os.remove(completeName)
+        return
+
+    @staticmethod
+    def load(name) :
+
+        target_path = os.path.abspath(os.path.join(
+                        os.path.dirname(__file__), 
+                        os.pardir,
+                        "saved_IAs")
+        )
+        filename = name + '.obj'
+        completeName = os.path.join(target_path, filename)
+
+        file=open(completeName,'rb')
+        player=pickle.load(file)
+        return player
+
     def set_learning(self,learning) :
         self.learning=learning
     
@@ -79,6 +125,19 @@ class bootstrap_player(Player) :
     def max_evaluate(self) :
         theta_abs=np.array(np.abs(self.theta))
         return np.dot(np.transpose(theta_abs),self.VALABS_FEATURES_MAX)
+
+    def count_error(self,board,score) :
+
+        if not np.isfinite(score) :
+            if score>0 :
+                score=self.max_evaluate()
+            else :
+                score=-self.max_evaluate()
+                
+        error=score-self.evaluate(board)
+
+        self.total_square_error=(self.number_scores_counted*self.total_square_error+error**2)/(self.number_scores_counted+1)
+        self.number_scores_counted+=1
     
     def update_theta(self,board,score) :
 
@@ -141,6 +200,9 @@ class bootstrap_player(Player) :
             
             if self.learning and depth==depth_total : 
                 self.update_theta(board,score)
+
+            if self.counting_error and depth==depth_total :
+                self.count_error(board,score)
                 
             return score,best_move
 
@@ -166,4 +228,7 @@ class bootstrap_player(Player) :
             if self.learning and depth==depth_total : 
                 self.update_theta(board,score)
                 
+            if self.counting_error and depth==depth_total :
+                self.count_error(board,score)
+
             return score,best_move

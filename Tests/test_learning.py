@@ -1,3 +1,5 @@
+import numpy as np
+
 import os
 import sys
 PROJECT_ROOT = os.path.abspath(os.path.join(
@@ -12,13 +14,13 @@ from IA.random_player import random_player
 from IA.minimax_player import minimax_player
 from IA.bootstrap_player import bootstrap_player
 
-boot=bootstrap_player(3)
+#boot=bootstrap_player(2)
 
-print(boot.theta)
+#print(boot.theta)
 
-board=Board()
+#board=Board()
 #print(boot.evaluate(board))
-boot.learning=True
+#boot.learning=True
 #move=boot.minimax_search(board,3,True,3)
 #print(boot.theta)
 #for i in range(10) :
@@ -32,10 +34,13 @@ boot.learning=True
 #    print(boot.theta)
 #
 #print(boot.theta)
-boot.step=1e-2
-for i in range(10) :
-    print("")
-    game=Game(boot,minimax_player(2))
-    print(game.end_game(verbose=False,ignore_history=False))
-    print(boot.theta)
-    print("")
+
+#boot.save()
+##boot.delete()
+#print(boot.get_name())
+#boot.save()
+
+boot2=bootstrap_player.load('bootstrap_player1645892527729')
+print(boot2.get_name())
+print(boot2.theta)
+boot2.delete()
