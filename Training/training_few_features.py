@@ -14,8 +14,9 @@ from IA.random_player import random_player
 from IA.minimax_player import minimax_player
 from IA.bootstrap_player import bootstrap_player
 
-boot = bootstrap_player.load("bootstrap_player1645979635757")
-boot.depth=4
+boot = bootstrap_player(4)
+boot.step=1.0
+boot.name="trained"
 boot.counting_error=True
 
 p2=minimax_player(2)
@@ -27,3 +28,38 @@ for i in range(100) :
     print(boot.total_square_error)
 
 boot.save()
+boot.total_square_error=0
+
+p2=minimax_player(3)
+
+for i in range(100) :
+    game=Game(boot,p2)
+    game.end_game(ignore_history=False)
+    print(boot.theta)
+    print(boot.total_square_error)
+
+boot.save()
+boot.total_square_error=0
+
+p2=minimax_player(4)
+
+for i in range(100) :
+    game=Game(boot,p2)
+    game.end_game(ignore_history=False)
+    print(boot.theta)
+    print(boot.total_square_error)
+
+boot.save()
+boot.total_square_error=0
+
+p2=minimax_player(5)
+
+for i in range(100) :
+    game=Game(boot,p2)
+    game.end_game(ignore_history=False)
+    print(boot.theta)
+    print(boot.total_square_error)
+
+
+
+

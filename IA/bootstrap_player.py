@@ -15,7 +15,7 @@ from Game_Interface.board import Board
 
 class bootstrap_player(Player) :
 
-    ALL_FEATURES=["number_pawns_p1","number_pawns_p2","number_kings_p1","number_kings_p2","prout"]
+    ALL_FEATURES=["number_pawns_p1","number_pawns_p2","number_kings_p1","number_kings_p2"]
     VALABS_FEATURES_MAX=np.array([12,12,12,12])
     CST_VAR=1
 
