@@ -14,7 +14,7 @@ from IA.random_player import random_player
 from IA.minimax_player import minimax_player
 from IA.bootstrap_player import bootstrap_player
 
-#boot=bootstrap_player(2)
+boot=bootstrap_player(2)
 
 #print(boot.theta)
 
@@ -39,8 +39,6 @@ from IA.bootstrap_player import bootstrap_player
 ##boot.delete()
 #print(boot.get_name())
 #boot.save()
-
-boot2=bootstrap_player.load('bootstrap_player1645892527729')
-print(boot2.get_name())
+boot2 = bootstrap_player.load("bootstrap_player1645979635757")
 print(boot2.theta)
-boot2.delete()
+print(Game(boot2,minimax_player(1)).end_game(ignore_history=False))

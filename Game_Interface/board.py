@@ -434,7 +434,7 @@ class Board:
             
     def numbers(self):
         
-        p1c,p1k,p2c,p2k=0,0,0,0
+        p1c,p1k,p2c,p2k,p134,p234,p156,p256=0,0,0,0,0,0,0,0
         for i in range(8):
             for j in range(4):
                 location = i,j
@@ -442,35 +442,45 @@ class Board:
                     pass
                 elif self.spots[location[0]][location[1]] == self.P1:
                     p1c+=1
+                    if i==3 or i==4 :
+                        p134+=1
+                    if i==5 or i==6 : 
+                        p156+=1
                 elif self.spots[location[0]][location[1]] == self.P2:
                     p2c+=1
+                    if i==3 or i==4 :
+                        p256+=1
+                    if i==5 or i==6 : 
+                        p234+=1
                 elif self.spots[location[0]][location[1]] == self.P1_K:
                     p1k+=1
                 else:
                     p2k+=1
         return p1c,p2c,p1k,p2k
     
-    def get_numberpawnsp1_value(self) :
-        return self.numbers()[0]
-    
-    def get_numberpawnsp2_value(self) :
-        return self.numbers()[1]
-    
-    def get_numberkingsp1_value(self) :
-        return self.numbers()[2]
-    
-    def get_numberkingsp2_value(self) :
-        return self.numbers()[3]
-    
-    def get_feature_value(self,name_feature) :
-        if name_feature=="number_pawns_p1" :
-            return self.get_numberpawnsp1_value()
-        if name_feature=="number_pawns_p2" :
-            return self.get_numberpawnsp2_value()
-        if name_feature=="number_kings_p1" :
-            return self.get_numberkingsp1_value()
-        if name_feature=="number_kings_p2" :
-            return self.get_numberkingsp2_value()
+    def get_features_values(self,features) :
+        numbers=self.numbers()
+        answer=[]
+
+        for name_feature in features :
+            if name_feature=="number_pawns_p1" :
+                answer.append(numbers[0])
+            if name_feature=="number_pawns_p2" :
+                answer.append(numbers[1])
+            if name_feature=="number_kings_p1" :
+                answer.append(numbers[2])
+            if name_feature=="number_kings_p2" :
+                answer.append(numbers[3])
+            if name_feature=="number_pieces_3or4_p1" :
+                answer.append(numbers[4])
+            if name_feature=="number_pieces_3or4_p2" :
+                answer.append(numbers[5])
+            if name_feature=="number_pieces_5or6_p1" :
+                answer.append(numbers[6])
+            if name_feature=="number_pieces_5or6_p2" :
+                answer.append(numbers[7])
+
+        return answer
     
     def evaluate(self,repetition=False):
         if repetition :

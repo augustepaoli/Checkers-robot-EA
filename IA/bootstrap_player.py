@@ -15,7 +15,7 @@ from Game_Interface.board import Board
 
 class bootstrap_player(Player) :
 
-    ALL_FEATURES=["number_pawns_p1","number_pawns_p2","number_kings_p1","number_kings_p2"]
+    ALL_FEATURES=["number_pawns_p1","number_pawns_p2","number_kings_p1","number_kings_p2","prout"]
     VALABS_FEATURES_MAX=np.array([12,12,12,12])
     CST_VAR=1
 
@@ -104,7 +104,7 @@ class bootstrap_player(Player) :
         return self.number_games
     
     def get_features_values(self,board) :
-        return np.array([board.get_feature_value(self.features[i]) for i in range(len(self.features))])
+        return np.array(board.get_features_values(self.features))
     
     def evaluate(self,board,repetition=False) :
         if repetition :
