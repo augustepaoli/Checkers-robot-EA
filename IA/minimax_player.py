@@ -1,3 +1,5 @@
+import random as rd
+
 import os
 import sys
 PROJECT_ROOT = os.path.abspath(os.path.join(
@@ -60,13 +62,21 @@ class minimax_player(Player) :
                     ignore_history.append(new_board)
                 
                 evaluation = self.minimax_search(new_board, depth-1, False,ignore_history)[0]
+
+                egalite=(score==evaluation and i>=1)
+                
                 score = max(score, evaluation)
                 if score == evaluation:
-                    best_move = moves[i]
+                    if egalite :
+                        best_moves.append(moves[i])
+                    else :
+                        best_moves = [moves[i]]
                     
                 if ignore_history!=True :
                     ignore_history.pop()
                     
+            best_move = rd.choice(best_moves)
+
             return score,best_move
 
         else:
@@ -81,11 +91,19 @@ class minimax_player(Player) :
                     ignore_history.append(new_board)
                 
                 evaluation = self.minimax_search(new_board, depth-1, True, ignore_history)[0]
+
+                egalite=(score==evaluation and i>=1)
+                
                 score = min(score, evaluation)
                 if score == evaluation:
-                    best_move = moves[i]
+                    if egalite :
+                        best_moves.append(moves[i])
+                    else :
+                        best_moves = [moves[i]]
                     
                 if ignore_history!=True :
                     ignore_history.pop()
                 
+            best_move = rd.choice(best_moves)
+            
             return score,best_move

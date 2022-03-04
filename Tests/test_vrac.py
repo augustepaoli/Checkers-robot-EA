@@ -5,7 +5,7 @@ import pickle
 import os
 
 PROJECT_ROOT2 = os.path.abspath(os.path.join(os.path.dirname(__file__),os.pardir,"Game"))
-
+print(1000**(2/3))
 print(PROJECT_ROOT2)
 
 import sys

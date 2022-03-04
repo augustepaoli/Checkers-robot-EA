@@ -39,6 +39,15 @@ boot=bootstrap_player(2)
 ##boot.delete()
 #print(boot.get_name())
 #boot.save()
-boot2 = bootstrap_player.load("bootstrap_player1645979635757")
-print(boot2.theta)
-print(Game(boot2,minimax_player(1)).end_game(ignore_history=False))
+boot = bootstrap_player(1)
+print(boot.theta)
+print(boot.number_games)
+
+p2=random_player()
+
+for i in range(10) :
+    print(i)
+    game=Game(boot,p2)
+    game.end_game(ignore_history=False)
+    print(boot.theta)
+    print(boot.total_square_error)

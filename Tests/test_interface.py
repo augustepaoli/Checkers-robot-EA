@@ -9,6 +9,6 @@ sys.path.append(PROJECT_ROOT)
 from Game.game_vs_IA import Game_vs_IA
 from IA.minimax_player import minimax_player
 
-p=minimax_player(2)
+p=minimax_player(3)
 game = Game_vs_IA(p)
 game.end_game(ignore_history=False)
