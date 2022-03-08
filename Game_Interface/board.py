@@ -434,7 +434,8 @@ class Board:
             
     def numbers(self):
         
-        p1c,p1k,p2c,p2k,p134,p234,p156,p256=0,0,0,0,0,0,0,0
+        p1c,p1k,p2c,p2k,p134,p234,p156,p256,p1center,p2center,p1bridge,p2bridge=0,0,0,0,0,0,0,0,0,0,0,0
+
         for i in range(8):
             for j in range(4):
                 location = i,j
@@ -442,21 +443,45 @@ class Board:
                     pass
                 elif self.spots[location[0]][location[1]] == self.P1:
                     p1c+=1
-                    if i==3 or i==4 :
+                    if i==2 or i==3 :
                         p134+=1
-                    if i==5 or i==6 : 
+                    if i==4 or i==5 : 
                         p156+=1
+                    if (i==3 and (j==1 or j==2)) or (i==4 and (j==1 or j==2)) :
+                        p1center+=1
                 elif self.spots[location[0]][location[1]] == self.P2:
                     p2c+=1
-                    if i==3 or i==4 :
+                    if i==2 or i==3 :
                         p256+=1
-                    if i==5 or i==6 : 
+                    if i==4 or i==5 : 
                         p234+=1
+                    if (i==3 and (j==1 or j==2)) or (i==4 and (j==1 or j==2)) :
+                        p2center+=1
                 elif self.spots[location[0]][location[1]] == self.P1_K:
                     p1k+=1
+                    if (i==3 and (j==1 or j==2)) or (i==4 and (j==1 or j==2)) :
+                        p1center+=1
                 else:
                     p2k+=1
-        return p1c,p2c,p1k,p2k
+                    if (i==3 and (j==1 or j==2)) or (i==4 and (j==1 or j==2)) :
+                        p2center+=1
+        
+        p1bridge = 1
+        p2bridge = 1
+        
+        if p2k>0 :
+            p1bridge=0
+        else :
+            if self.spots[0][1] != self.P1 or self.spots[0][3] != self.P1 :
+                p1bridge = 0
+
+        if p1k>0 :
+            p2bridge=0
+        else :
+            if self.spots[7][0] != self.P2 or self.spots[7][2] != self.P2 :
+                p2bridge = 0
+
+        return p1c,p2c,p1k,p2k,p134,p234,p156,p256,p1center,p2center,p1bridge,p2bridge
     
     def get_features_values(self,features) :
         numbers=self.numbers()
@@ -479,6 +504,14 @@ class Board:
                 answer.append(numbers[6])
             if name_feature=="number_pieces_5or6_p2" :
                 answer.append(numbers[7])
+            if name_feature=="center_control_p1" :
+                answer.append(numbers[8])
+            if name_feature=="center_control_p2" :
+                answer.append(numbers[9])
+            if name_feature=="bridge_p1" :
+                answer.append(numbers[10])
+            if name_feature=="bridge_p2" :
+                answer.append(numbers[11])
 
         return answer
     
@@ -495,7 +528,7 @@ class Board:
                 return(-100)
             return(100)
         
-        p1c,p2c,p1k,p2k=self.numbers()
+        p1c,p2c,p1k,p2k=self.numbers()[:4]
         return(p1c - p2c + 2*(p1k - p2k))
     
     def winner(self):

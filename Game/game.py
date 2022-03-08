@@ -21,7 +21,7 @@ class Game :
     def same_numbers(self) :
         if len(self.last_boards)>=2 :
             for i in range(len(self.last_boards)-1) :
-                if self.last_boards[i].numbers()!=self.last_boards[i+1].numbers() :
+                if self.last_boards[i].numbers()[:4]!=self.last_boards[i+1].numbers()[:4] :
                     return False
         return True
         
@@ -46,10 +46,16 @@ class Game :
 
         if turn :
             p=self.p1.get_name() + "1"
-            board.make_move(self.p1.move(board,ignore_history))
+            move=self.p1.move(board,ignore_history)
+            if move.__class__.__name__=="Board" :
+                return
+            board.make_move(move)
         else :
             p=self.p2.get_name() + "2"
-            board.make_move(self.p2.move(board,ignore_history))
+            move=self.p2.move(board,ignore_history)
+            if move.__class__.__name__=="Board" :
+                return
+            board.make_move(move)
         
         if len(self.last_boards)==25 :
             self.last_boards.pop(0)

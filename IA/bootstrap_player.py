@@ -16,8 +16,8 @@ from Game_Interface.board import Board
 
 class bootstrap_player(Player) :
 
-    ALL_FEATURES=["number_pawns_p1","number_pawns_p2","number_kings_p1","number_kings_p2","number_pieces_3or4_p1","number_pieces_3or4_p2","number_pieces_5or6_p1","number_pieces_5or6_p2"]
-    VALABS_FEATURES_MAX=np.array([12,12,12,12,8,8,8,8])
+    ALL_FEATURES=["number_pawns_p1","number_pawns_p2","number_kings_p1","number_kings_p2","number_pieces_3or4_p1","number_pieces_3or4_p2","number_pieces_5or6_p1","number_pieces_5or6_p2","center_control_p1","center_control_p2","bridge_p1","bridge_p2"]
+    VALABS_FEATURES_MAX=np.array([12,12,12,12,8,8,8,8,4,4,1,1])
     CST_VAR=1
 
     def __init__(self,default_depth,learning=True,step=5e-2,theta_init="rd",features="all") :
@@ -109,9 +109,7 @@ class bootstrap_player(Player) :
     
     def evaluate(self,board,repetition=False) :
         if repetition :
-            print("il y a fin par repetition")
             val=self.evaluate(board)
-            print(val)
             if val>0 :
                 return np.inf
             if val<0 :
@@ -119,7 +117,6 @@ class bootstrap_player(Player) :
             return 0
         
         if board.is_game_over() :
-            print("game over")
             if board.player_turn :
                 return(-np.inf)
             return(np.inf)
@@ -144,17 +141,13 @@ class bootstrap_player(Player) :
         self.number_scores_counted+=1
     
     def update_theta(self,board,score) :
-        end_game=False
+
         if not np.isfinite(score) :
-            end_game=True
             if score>0 :
                 score=self.max_evaluate()
             else :
                 score=-self.max_evaluate()
-        if end_game :
-            board.print_board()
-            print(score)
-            print(self.evaluate(board))
+                
         error=score-self.evaluate(board)
         step=self.step/((self.get_numbergames()+1)**(2/3))
         delta_theta=step*error*self.get_features_values(board)
@@ -178,7 +171,7 @@ class bootstrap_player(Player) :
         if ignore_history!=True and len(ignore_history)>=25 :
             same = True
             for i in range(24) :
-                if ignore_history[len(ignore_history)-i-1].numbers() != ignore_history[len(ignore_history)-i-2].numbers() :
+                if ignore_history[len(ignore_history)-i-1].numbers()[:4] != ignore_history[len(ignore_history)-i-2].numbers()[:4] :
                     same=False
             if same :
                 return self.evaluate(board,True),board

@@ -26,8 +26,16 @@ print("")
 #    if game.end_game()==2 :
 #        count+=1
 #print(count)
-
-p1=minimax_player(3)
-p2=minimax_player(5)
-game=Game(p1,p2)
-print(game.end_game(ignore_history=False,verbose=True))
+import numpy as np
+counts=np.array([[0.2,0.2],[0.1,0.1]])
+print(counts[:,0])
+count=0
+for i in range(5) :
+    print(i)
+    p1=minimax_player(3)
+    p2=minimax_player(4)
+    game=Game(p1,p2)
+    result=game.end_game(ignore_history=False)
+    if result== 1:
+        count+=1
+print(count)
